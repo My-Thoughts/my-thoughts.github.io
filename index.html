@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Thoughts</title>
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+        <style>
+            /*general styling*/
+            body {
+                margin: 0;
+                padding: 0;
+                cursor: default;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                -moz-user-select: -moz-none;
+                user-select: none;
+            }
+            div {
+                box-sizing: border-box;
+            }
+            a {
+                color: rgb(6, 161, 204);
+                text-decoration: none;
+                border-bottom: 1px solid rgba(6, 161, 204, 0.2);
+                transition: 0.2s ease;
+            }
+            a:hover {
+                border-bottom: 1px solid rgba(6, 161, 204, 1);
+            }
+            
+            @keyframes fadein {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            @keyframes fadeout {
+                from {
+                    display: block;
+                    opacity: 1;
+                }
+                to {
+                    display: none;
+                    opacity: 0;
+                }
+            }
+            
+            /*heading*/
+            #heading {
+                background-color: rgb(196, 146, 8);
+                background-image: linear-gradient(0deg, rgb(0, 0, 0, 0.7), rgb(0, 0, 0, 0.1)), url('https://upload.wikimedia.org/wikipedia/commons/f/f7/Black_ice_growler_upernavik_2007-07-07a.jpg');
+                background-attachment: fixed;
+                background-position: center center;
+                background-size: cover;
+                font-size: 2em;
+                word-wrap: break-word;
+                letter-spacing: 5px;
+                text-align: center;
+                color: white;
+                font-family: "Permanent Marker", cursive;
+                width: 100vw;
+                padding: 30px 0;
+            }
+            
+            /*tag styling*/
+            .tag {
+                border-radius: 100px;
+                font-family: "Raleway", "Arial", "Times New Roman";
+                outline: none;
+                border: none;
+                padding: 3px 10px;
+                margin: 2px 4px;
+                color: white;
+                background-color: rgb(196, 180, 8);
+                transition: 0.15s ease;
+            }
+            .tag:hover {
+                cursor: pointer;
+                filter: brightness(0.8);
+            }
+            #tags {
+                font-family: "Raleway", "Arial", "Times New Roman";
+                padding: 40px 60px 10px 40px;
+                width: 100vw;
+            }
+            
+            /*cover styling*/
+            .covBackground {
+                position: absolute;
+                z-index: 0;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-position: center center;
+                background-size: cover;
+                background-color: gray;
+                transition: 0.2s ease;
+            }
+            .cover {
+                position: relative;
+                display: inline-block;
+                vertical-align: top;
+                text-align: left;
+                padding: 0;
+                width: 100%;
+                height: auto;
+                color: white;
+                font-family: "Raleway";
+                transition: 0.2s ease;
+                overflow: hidden;
+            }
+            .cover .coverContent {
+                position: relative;
+                background-color: rgba(0, 0, 0, 0.4);
+                padding: 10px 15px;
+            }
+            .cover .title {
+                font-size: 1.25em;
+                word-wrap: break-word;
+            }
+            .cover .description {
+                font-size: 0.9em;
+                word-wrap: break-word;
+                margin-bottom: 6px;
+            }
+            .cover .covertag {
+                font-size: 0.6em;
+                display: inline-block;
+                color: white;
+                padding: 2px 5px;
+                margin: 0 2px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.3);
+            }
+            .cover:hover {
+                cursor: pointer;
+                box-shadow: 0 0 0.5em rgb(153, 153, 153);
+            }
+            .cover:hover .covBackground {
+                transform: scale(1.1);
+            }
+            
+            /*popup story styling*/
+            .story {
+                position: relative;
+                display: none;
+                width: 100%;
+                opacity: 0;
+                font-family: "Times New Roman", "Arial";
+                background: white;
+                padding: 40px 30px;
+                color: rgb(33, 33, 33);
+            }
+            .story .title {
+                font-family: "Raleway", "Times New Roman";
+                font-size: 1.7em;
+                text-align: center;
+                margin-bottom: 10px;
+                color: black;
+            }
+            .story .date {
+                margin-top: 0;
+                text-align: center;
+                font-size: 0.8em;
+            }
+            
+            /*xout buttons*/
+            .story .xout {
+                position: absolute;
+                transform: translateY(-20px);
+                background: rgb(97, 97, 97);
+                border: 1px solid rgb(97, 97, 97);
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                left: 15px;
+                text-align: center;
+                outline: none;
+                transition: 0.2s ease;
+                stroke: white;
+            }
+            .story .xout:hover {
+                cursor: pointer;
+                transform: translateY(-20px) scale(1.1);
+                background: transparent;
+                stroke: rgb(97, 97, 97);
+            }
+            .story .xout .xoutsvg {
+                width: 15px;
+                height: 15px;
+                vertical-align: middle;
+            }
+            
+            /*popup shading*/
+            #cover {
+                opacity: 0;
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                padding: 10% 10%;
+                background: rgb(0, 0, 0, 0.4);
+                overflow-y: scroll;
+            }
+            
+            /*specific content container styling*/
+            #content {
+                width: 100vw;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-gap: 10px;
+                grid-auto-rows: 0;
+                padding: 30px 40px;
+                padding-right: 55px;
+            }
+            
+            /*footer styling*/
+            footer {
+                background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/4/43/2006-01-14_Surface_waves.jpg');
+                background-size: cover;
+                background-position: center center;
+                background-attachment: fixed;
+                padding: 18px;
+                margin-top: 20px;
+                text-align: center;
+            }
+            footer > span > a {
+                font-size: 0.9em;
+                color: white;
+                text-decoration: none;
+                border-bottom: 3px dotted rgba(255, 255, 255, 0.3);
+                transition: 0.15s ease;
+            }
+            footer > span > a:hover {
+                border-bottom: 3px dotted rgba(255, 255, 255, 0.7);
+            }
+        </style>
+    </head>
+    <body>
+    <!--heading-->
+    <div id = "heading">
+        <h1>Some of My Thoughts</h1>
+    </div>
+    
+    <!--tags-->
+    <div id = "tags">Tags: </div>
+    
+    <!--body div-->
+    <div id = "content"></div>
+    
+    <!--footer-->
+    <footer>
+        <span><a href = "https://sites.google.com/view/whiteinksplash/home">My Website</a></span>
+    </footer>
+    
+    <!--cover-->
+    <div id = "cover"></div>
+    </body>
+    
+    <!--stories
+    (I mean right now I don't have that many buuuuut okay)-->
+    <script>
+        var entries = [
+            {
+                title: "Conversation",
+                description: "It's amazing how conversation can keep your life going.",
+                content: "Conversation.\nIt's a curious thing, conversation.\nYou don't really think about it, until something unwelcome comes crashing into your life and you are forced to look at it. Then, you realize how utterly anti-social you are, your social interaction with others being reduced to nothing by the black slab of plastic in your hands.",
+                date: new Date("September 13, 2020"),
+                tags: ["hope", "future", "coronavirus"],
+                img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Moerasvaren_%28Thelypteris_palustris%29._26-04-2020_%28d.j.b.%29_01.jpg",
+                colorFrom: "rgb(0, 0, 0, 0.7)",
+                colorTo: "rgb(0, 0, 0, 0.3)"
+            }, //wings,
+            {
+                title: "thoughts",
+                description: "a short poem",
+                content: "<div style = \"text-align: center\">standing here, on a /knife's\\ edge<br>ready to give up<br>because it's so <i>so</i> easy to<br>fall<br>letting {go} is hard but<br>(s)t(a)y(i)n(g) is harder and<br>I'm a coward, I can't face this<br>can't take the hollowness of<br>me and myself and my thoughts (anymore)\n-\ntell me where the light is<br>when there's <i>-nothing-</i> left but<br>dust, but shadow past perfection<br>show me that there's something left<br>[[inside]] this gray<br>where <i>-everything-</i> is indefinite but<br>the numbness and pain\n-\nforgetting is easy but<br>oblivion (always) comes to an end and<br>remembering is like<br>being broken all over<br>again, and again, and again<br>each day as I shatter<br>you watch<br>-ticking- away the<br>silence<br>until the end\n-\n<i>everyone wants to rule<br>the world but is it<br>really<br>worth ruling?</i></div>",
+                date: new Date("September 28, 2018"),
+                tags: ["dark", "poetry", "thoughts"]
+            }, //thoughts
+        ];
+    </script>
+    
+    <!--actually turning those stories into what you see :P-->
+    <script>
+        //some variables
+        var cover = document.getElementById("cover"),
+        width = window.innerWidth,
+        height = window.innerHeight,
+        content = document.getElementById("content"),
+        rowGap = parseInt(getComputedStyle(content).getPropertyValue("grid-row-gap"));
+        
+        //some functions {
+        //paragraph-fy text
+        var paragraphForm = function(content){
+            //splitting paragraphs
+            var paragraphs = content.split("\n");
+            
+            //result
+            var result = "";
+            
+            //adding paragraphs to result
+            paragraphs.forEach(function(el){
+                result += "<p style = \"-webkit-user-select: none; -ms-user-select: none; -moz-user-select: -moz-none; user-select: none;\">" + el + "</p>";
+            });
+            
+            //returning result
+            return result;
+        };
+        
+        //create xout buttons
+        var createxOut = function(story){
+            //actual button 
+            var xOut = document.createElement("button");
+            xOut.className = "xout";
+            
+            //making a svg
+            var svgCont = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgCont.setAttribute("viewBox", "-0.5 -0.5 11 11");
+            svgCont.setAttribute("class", "xoutsvg");
+            
+            //stuff inside svg
+            var xShape = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            xShape.setAttribute("d", "M 0, 0 L 10, 10 M 10, 0 L 0, 10");
+            
+            //appending stuff yay
+            svgCont.appendChild(xShape);
+            xOut.appendChild(svgCont);
+            story.appendChild(xOut);
+        };
+        
+        //event listener for covers
+        var openStory = function(story){
+            //fixating background
+            document.body.style.overflowY = "hidden";
+            
+            //showing cover
+            cover.style.display = "block";
+            cover.style.animation = "fadein 0.5s ease forwards";
+            
+            //showing story
+            story.style.animation = "fadein 0.5s ease forwards";
+            story.style.display = "block";
+            
+            //scrolling to the top
+            cover.scrollTop = 0;
+            
+            //add click event listener (after a small while so it doesn't trigger on current click)
+            window.setTimeout(function(){
+                var clickClose = cover.addEventListener("click", function(e){
+                    //if clicked on the cover and not on the story
+                    var target = e.target || e.srcElement;
+                    if(target === cover && target !== story) {
+                        //close story
+                        closeStory(story);
+                        
+                        //remove event listener for the time being
+                        window.removeEventListener("click", clickClose);
+                    }
+                });
+            }, 10)
+        };
+        
+        //event listener for xout buttons
+        var closeStory = function(story){
+            //reset scroll
+            document.body.style.overflowY = "scroll";
+            
+            //fade out cover and story
+            cover.style.animation = "fadeout 0.5s ease forwards";
+            story.style.animation = "fadeout 0.5s ease forwards";
+            
+            //reset stuff after transition
+            window.setTimeout(function(){
+                //reset animation
+                cover.style.animation = "";
+                cover.style.display = "none";
+                story.style.animation = "";
+                story.style.display = "none";
+            }, 500);
+        };
+        
+        //resizing cover (masonry style layout)
+        var resizeCover = function(cover){
+            //resize cover element
+            cover.coverEl.style.gridRowEnd = "span " + Math.ceil((cover.coverHeight + 5 + rowGap)/rowGap);
+            
+            //resize cover content element to be the same size (height) as the cover element
+            cover.coverContentEl.style.height = cover.coverEl.getBoundingClientRect().height + "px";
+        };
+        
+        //filtering stories general function
+        var filterStories = function(){
+            //first set active covers to all covers
+            activeCovers = entries.slice(0);
+            
+            //loop through covers and filter
+            activeCovers = activeCovers.filter(function(el){
+                //loop through story tags
+                for(var i = 0, hastag = false; i < el.tags.length; i++){
+                    //if active tags includes a tag on this story, set has tag to true
+                    if(activeTags.includes(el.tags[i])){
+                        hastag = true;
+                        break;
+                    }
+                }
+            
+                //return whether or not the story has a tag in it
+                return hastag;
+            });
+            
+            //loop through covers
+            entries.forEach(function(el){
+                //if active covers includes this element, it is visible, and resize element
+                if(activeCovers.includes(el)){
+                    el.coverEl.style.display = "inline-block";
+                    resizeCover(el);
+                }
+                
+                //otherwise, it should not be visible
+                else {
+                    el.coverEl.style.display = "none";
+                }
+            });
+        };
+        //}
+        
+        //setting up tags (variables) {
+        var tagDiv = document.getElementById("tags");
+        var allTags = [], activeTags = [], activeCovers = [];
+        var tagColors = ["rgb(235, 14, 132)", "rgb(212, 49, 21)", "rgb(237, 108, 38)", "rgb(235, 134, 56)", "rgb(230, 177, 18)", "rgb(245, 233, 8)", "rgb(156, 230, 18)", "rgb(24, 199, 50)", "rgb(59, 235, 170)", "rgb(18, 205, 230)", "rgb(34, 151, 240)", "rgb(18, 96, 230)", "rgb(110, 52, 235)", "rgb(145, 35, 235)", "rgb(186, 24, 240)", "rgb(240, 57, 234)"], colindex = Math.floor(Math.random() * tagColors.length), randomizeColors = true;
+        //}
+        
+        //looping through and creating content
+        entries.forEach(function(el, index){
+            //cover element
+            var coverEl = document.createElement("div");
+            coverEl.className = "cover";
+            
+            //content in cover div
+            var contentCover = document.createElement("div");
+            contentCover.className = "coverContent";
+            
+            //styling cover
+            if(el.img){
+                //new div containing background image
+                var imgDiv = document.createElement("div");
+                imgDiv.className = "covBackground";
+                imgDiv.style.backgroundImage = "url('" + el.img + "')";
+                coverEl.appendChild(imgDiv);
+            }
+            else if(!el.img && !el.color && !el.colorTo && !el.colorFrom){
+                coverEl.style.background = "rgb(153, 153, 153)";
+            }
+            //if there's a specified color overlay
+            if(el.color){
+                contentCover.style.background = "no-repeat linear-gradient(0deg, " + el.color + ", " + el.color + ")";
+            }
+            else if(el.colorTo && el.colorFrom){
+                contentCover.style.background = "no-repeat linear-gradient(0deg, " + el.colorFrom + ", " + el.colorTo + ")";
+            }
+            
+            //title
+            var title = document.createElement("h2");
+            title.className = "title";
+            title.textContent = el.title;
+            contentCover.appendChild(title);
+            
+            //description
+            var description = document.createElement("p");
+            description.className = "description";
+            description.textContent = el.description;
+            contentCover.appendChild(description);
+            
+            //appending cover
+            coverEl.appendChild(contentCover);
+            content.appendChild(coverEl);
+            el.coverEl = coverEl;
+            el.coverContentEl = contentCover;
+            
+            //updating tags
+            el.tags.forEach(function(tag){
+                //add tags to the cover
+                var newCovTag = document.createElement("div");
+                newCovTag.className = "covertag";
+                newCovTag.textContent = tag;
+                contentCover.appendChild(newCovTag);
+                
+                //if all tags don't include this tag, add it
+                if(!allTags.includes(tag)){
+                    allTags.push(tag);
+                    activeTags.push(tag);
+                }
+            });
+            
+            //getting height of the element and resizing it
+            el.coverHeight = contentCover.getBoundingClientRect().height;
+            resizeCover(el);
+            
+            //creating popup module
+            var story = document.createElement("div");
+            story.className = "story";
+            story.style.webkitUserSelect = "none";
+            story.style.mozUserSelect = "-moz-none";
+            story.style.msUserSelect = "none";
+            story.style.userSelect = "none";
+            el.storyEl = story;
+            
+            //x-out button
+            createxOut(story);
+            
+            //story title
+            var storyTitle = document.createElement("h2");
+            storyTitle.className = "title";
+            storyTitle.textContent = el.title;
+            story.appendChild(storyTitle);
+            
+            //date
+            var storyDate = document.createElement("p");
+            storyDate.className = "date";
+            storyDate.textContent = (new Intl.DateTimeFormat("en-US").format(el.date));
+            story.appendChild(storyDate);
+            
+            //story itself
+            story.innerHTML += paragraphForm(el.content);
+            
+            //appending story
+            cover.appendChild(story);
+            
+            //adding click event listeners to cover and xout button
+            story.getElementsByClassName("xout")[0].addEventListener("click", function(){
+                closeStory(story);
+            });
+            coverEl.addEventListener("click", function(){
+                openStory(story);
+            });
+        });
+        
+        //looping through tags and creating tags
+        allTags.forEach(function(el){
+            //create new tag element
+            var newTag = document.createElement("button");
+            newTag.className = "tag activeTag";
+            newTag.textContent = el;
+            
+            //styling the colors for the background
+            var jumpamt = Math.floor(Math.random()*2 + 1);
+            newTag.dataset.colorFrom = tagColors[colindex % tagColors.length];
+            newTag.dataset.colorTo = tagColors[(colindex + jumpamt) % tagColors.length];
+            if(randomizeColors) {
+                newTag.style.background = "linear-gradient(30deg, " + newTag.dataset.colorFrom + ", " + newTag.dataset.colorTo + ")";
+                colindex += jumpamt;
+            }
+            else {
+                newTag.style.backgroundColor = "rgb(219, 186, 21)";
+            }
+            
+            //adding click event listener
+            newTag.addEventListener("click", function(){
+                //toggling activeness
+                if(newTag.className === "tag"){
+                    newTag.className = "tag activeTag";
+                    if(randomizeColors){
+                        newTag.style.background = "linear-gradient(30deg, " + newTag.dataset.colorFrom + ", " + newTag.dataset.colorTo + ")";
+                    }
+                    else {
+                        newTag.style.backgroundColor = "rgb(219, 186, 21)";
+                    }
+                    activeTags.push(newTag.textContent);
+                }
+                else {
+                    //if not the sole tag already
+                    if(activeTags.length !== 1){
+                        newTag.className = "tag";
+                        newTag.style.background = "rgb(150, 150, 150)";
+                        activeTags.splice(activeTags.indexOf(newTag.textContent), 1);
+                    }
+                }
+                
+                //filter stories
+                filterStories();
+            });
+            
+            //appending tag element
+            tagDiv.appendChild(newTag);
+        });
+        
+        //creating the popup note at the beginning {
+        var notice = document.createElement("div");
+        notice.className = "story";
+        
+        //xout
+        createxOut(notice);
+        
+        //title and content
+        var noticetitle = document.createElement("h2");
+        noticetitle.className = "title";
+        noticetitle.textContent = "Note";
+        var notetext = document.createElement("p");
+        notetext.innerHTML = "A small webpage made to house some of my short stories. They deserve a good home.<br><br>Thanks to Khan Academy for giving me the inspiration for this project, they rock. Also would like to thank all the people who have helped me along this journey of learning to code, and making my life more colorful than ever.<br><br>Thank you for taking the time to read this message, and I hope you can find some peace and solace here.<br><br>P.S. Also would like to thank all the friends that have helped me along the way, and provided mental support to me.";
+        
+        //appending stuff
+        notice.appendChild(noticetitle);
+        notice.appendChild(notetext);
+        
+        //append notice
+        cover.appendChild(notice);
+        
+        //add event listener to xout
+        notice.getElementsByClassName("xout")[0].addEventListener("click", function(){
+            closeStory(notice);
+        });
+        
+        //fading in
+        openStory(notice);  
+        //}
+    </script>
+</html>
