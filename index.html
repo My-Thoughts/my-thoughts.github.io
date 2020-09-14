@@ -1,3 +1,10 @@
+<?php
+  $bg = array('https://upload.wikimedia.org/wikipedia/commons/e/e2/Clark_Center_Stanford_October_2019_HDR_2.jpg', 'https://upload.wikimedia.org/wikipedia/commons/d/db/Stanford_Dish_March_2013_HDR_2.jpg'); // array of filenames
+
+  $i = rand(0, count($bg)-1); // generate random number size of the array
+  $selectedBg = "$bg[$i]"; // set variable equal to which random filename was chosen
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -53,7 +60,7 @@
             /*heading*/
             #heading {
                 background-color: rgb(196, 146, 8);
-                background-image: linear-gradient(0deg, rgb(0, 0, 0, 0.7), rgb(0, 0, 0, 0.1)), url('https://upload.wikimedia.org/wikipedia/commons/f/f7/Black_ice_growler_upernavik_2007-07-07a.jpg');
+                background-image: linear-gradient(0deg, rgb(0, 0, 0, 0.7), rgb(0, 0, 0, 0.1)), url(images/<?php echo $selectedBg; ?>) no-repeat;
                 background-attachment: fixed;
                 background-position: center center;
                 background-size: cover;
