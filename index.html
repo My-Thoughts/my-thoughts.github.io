@@ -426,6 +426,14 @@
     
     <!--actually turning those stories into what you see :P-->
     <script>
+        
+        window.onload = function() {
+            if(!window.location.hash) {
+                window.location = window.location + '#loaded';
+                window.location.reload();
+            }
+        }
+        
         //some variables
         var cover = document.getElementById("cover"),
         width = window.innerWidth,
@@ -757,12 +765,5 @@
         //fading in
         openStory(notice);  
         //}
-        
-        window.onload = function() {
-            if(!window.location.hash) {
-                window.location = window.location + '#loaded';
-                window.location.reload();
-            }
-        }
     </script>
 </html>
