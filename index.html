@@ -270,6 +270,14 @@
     <!--stories
     (I mean right now I don't have that many buuuuut okay)-->
     <script>
+        
+        window.onload = function() {
+            if(!window.location.hash) {
+                window.location = window.location + '#loaded';
+                window.location.reload();
+            }
+        }
+        
         var entries = [
             {
                 title: "Conversation",
@@ -426,14 +434,6 @@
     
     <!--actually turning those stories into what you see :P-->
     <script>
-        
-        window.onload = function() {
-            if(!window.location.hash) {
-                window.location = window.location + '#loaded';
-                window.location.reload();
-            }
-        }
-        
         //some variables
         var cover = document.getElementById("cover"),
         width = window.innerWidth,
